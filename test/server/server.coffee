@@ -5,16 +5,19 @@ handlers =
   fake: ({ payload, toClient, user }) ->
     console.log payload
 WSS = require('../../src').Server
-wss = new WSS httpServer, handlers, noop, 'bad_secret'
+wss = new WSS { httpServer, handlers, secret: 'bad_secret' }
 
 
 describe 'Websocket Server', ->
   describe 'ctor', ->
     it 'should throw if no SERVER', ->
-      expect(require('../../src/server')).to.throw 'No HttpServer passed to ctor'
+      expect(require('../../src/server')).to.throw 'No HTTPSERVER passed to ctor'
+
+    it 'should throw if no HANDLERS', ->
+      expect(-> require('../../src/server') { httpServer }).to.throw 'No HANDLERS passed to ctor'
 
     it 'should throw if no SECRET', ->
-      expect(-> require('../../src/server') {}).to.throw 'No SECRET passed to ctor and JWT_SECRET env var not set'
+      expect(-> require('../../src/server') { httpServer, handlers }).to.throw 'No SECRET passed to ctor and JWT_SECRET env var not set'
 
 
   describe '_customHandler', ->

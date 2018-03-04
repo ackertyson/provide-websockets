@@ -5,12 +5,14 @@ UserSession = require './user_session'
 
 
 class SimpleWebSockets
-  constructor: (server, @handlers, @verify, secret) ->
-    throw new Error 'No HttpServer passed to ctor' unless server?
+  constructor: ({ handlers, httpServer, secret, verify }={}) ->
+    throw new Error 'No HTTPSERVER passed to ctor' unless httpServer?
+    @handlers = handlers
+    throw new Error 'No HANDLERS passed to ctor' unless @handlers?
     @secret = secret or process.env.JWT_SECRET
     throw new Error "No SECRET passed to ctor and JWT_SECRET env var not set" unless @secret?
-    @verify ?= (user) -> Promise.resolve user # default pass-thru
-    ws = new WebSocketServer httpServer: server
+    @verify = verify or (user) -> Promise.resolve user # default pass-thru
+    ws = new WebSocketServer { httpServer }
     ws.on 'request', @handleConnection
 
   _customHandler: (handler, expiresIn) ->
@@ -44,8 +46,9 @@ class SimpleWebSockets
     # ...or an array of properties which should be picked from req.user to form payload
     props = propsOrHandler
     unless Array.isArray props
-      throw new Error "Socket middleware should pass a custom handler
-        function which returns JWT payload or an array of props to pull from req.user"
+      throw new Error "Socket middleware should pass a custom handler function
+        which returns USER available to handlers or an array of props to pull
+        from req.user for that purpose"
     (req, res, next) =>
       payload = pick req.user, props...
       @_sendToken payload, res, expiresIn
