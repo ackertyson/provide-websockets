@@ -14,12 +14,12 @@ app = express()
 httpServer = http.createServer app
 Model = require './models-from-somewhere'
 handlers =
-  requestX: ({ payload, toClient, user }) ->
+  requestX: ({ payload, sendData, sendError, user }) ->
     Model.get payload.identifier
       .then (response) ->
-        toClient 'requestX data', response
+        sendData response
       .catch (err) ->
-        toClient 'requestX error', err
+        sendError err
 WSS = require('provide-websockets').Server
 socket = new WSS { httpServer, handlers }
 
