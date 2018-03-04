@@ -33,7 +33,7 @@ class SimpleWebSockets
   handleConnection: (request) => # establish new socket connection for user
     { token } = request.resourceURL.query
     @_verify(token).then (user) =>
-      connection = request.accept('my-proto', request.origin)
+      connection = request.accept('provide-ws', request.origin)
       @establishSession user, connection
     .catch (err) ->
       console.log err unless process.env.NODE_ENV is 'test'
