@@ -6,6 +6,7 @@ UserSession = require './user_session'
 
 class SimpleWebSockets
   constructor: (server, @handlers, @verify, secret) ->
+    throw new Error 'No HttpServer passed to ctor' unless server?
     @secret = secret or process.env.JWT_SECRET
     throw new Error "No SECRET passed to ctor and JWT_SECRET env var not set" unless @secret?
     @verify ?= (user) -> Promise.resolve user # default pass-thru
@@ -19,7 +20,7 @@ class SimpleWebSockets
       Promise.resolve(proceed).then (payload) =>
         @_sendToken payload, res, expiresIn
       , (err) ->
-        console.log err
+        console.log err unless process.env.NODE_ENV is 'test'
         next err
 
   establishSession: (user, connection) ->
@@ -33,7 +34,7 @@ class SimpleWebSockets
       connection = request.accept('my-proto', request.origin)
       @establishSession user, connection
     .catch (err) ->
-      console.log err
+      console.log err unless process.env.NODE_ENV is 'test'
       request.reject 401
 
   middleware: (propsOrHandler, expiresIn) ->
@@ -62,7 +63,7 @@ class SimpleWebSockets
       return reject(new Error 'No token provided') unless token?
       jwt.verify token, @secret, (err, payload) =>
         if err?
-          console.log err
+          console.log err unless process.env.NODE_ENV is 'test'
           return reject err
         resolve @verify payload
 
