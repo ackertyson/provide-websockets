@@ -68,5 +68,4 @@ class SimpleWebSockets
         resolve @verify payload
 
 
-module.exports = (args...) ->
-  new SimpleWebSockets args...
+module.exports = SimpleWebSockets

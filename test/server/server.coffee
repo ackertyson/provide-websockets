@@ -4,7 +4,8 @@ httpServer =
 handlers =
   fake: ({ payload, toClient, user }) ->
     console.log payload
-wss = require('../../src/server') httpServer, handlers, noop, 'bad_secret'
+WSS = require('../../src').Server
+wss = new WSS httpServer, handlers, noop, 'bad_secret'
 
 
 describe 'Websocket Server', ->

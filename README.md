@@ -19,7 +19,8 @@ handlers =
         toClient 'requestX data', response
       .catch (err) ->
         toClient 'requestX error', err
-socket = require('provide-websockets').server httpServer, handlers
+WSS = require('provide-websockets').Server
+socket = new WSS httpServer, handlers
 
 # endpoint for socket request authentication
 app.get '/auth/socket/token', socket.middleware ['id', 'first_name', 'last_name']
