@@ -1,6 +1,6 @@
 {
   "name": "provide-websockets",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Simple Websocket package",
   "main": "dist/index.js",
   "directories": {
