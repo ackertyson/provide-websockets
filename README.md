@@ -6,8 +6,6 @@
 
 ## Usage
 
-In server app:
-
 ```
 http = require 'http'
 app = express()
@@ -23,7 +21,7 @@ handlers =
 WSS = require('provide-websockets').Server
 socket = new WSS { httpServer, handlers }
 
-# endpoint for socket request authentication and USER middleware definition
+# endpoint for socket request authentication + USER middleware definition
 app.get '/auth/socket/token', socket.middleware ['id', 'first_name', 'last_name']
 
 port = process.env.PORT or 3000

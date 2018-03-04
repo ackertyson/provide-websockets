@@ -54,14 +54,17 @@ describe 'UserSession', ->
         type: 'utf6'
       expect(-> session.handleMsg msg).to.throw 'UTF8 messages only!'
 
-    it 'should throw on missing handler', ->
+    it 'should return error on missing handler', ->
       handlers =
         real: ->
       session = new UserSession user, connection, handlers
+      handleError = sinon.stub(session, 'handleError').returns()
       msg =
         utf8Data: JSON.stringify { msg: 'fake', body: 'Hi there' }
         type: 'utf8'
-      expect(-> session.handleMsg msg).to.throw "No Websocket handler found for message type 'fake'"
+      session.handleMsg msg
+      sinon.assert.calledWith handleError, "No Websocket handler found for message type 'fake'"
+      handleError.restore()
 
 
   describe 'pHandler', ->

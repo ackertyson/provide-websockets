@@ -4,7 +4,7 @@ jwt = require 'jsonwebtoken'
 UserSession = require './user_session'
 
 
-class SimpleWebSockets
+class SimpleSocketServer
   constructor: ({ handlers, httpServer, secret, verify }={}) ->
     throw new Error 'No HTTPSERVER passed to ctor' unless httpServer?
     @handlers = handlers
@@ -71,4 +71,4 @@ class SimpleWebSockets
         resolve @verify payload
 
 
-module.exports = SimpleWebSockets
+module.exports = SimpleSocketServer

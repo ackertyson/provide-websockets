@@ -1,4 +1,3 @@
 module.exports =
-  Client:
-    Vue: {}
+  Client: require './client'
   Server: require './server'
