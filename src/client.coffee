@@ -1,3 +1,5 @@
+{ isFunction } = require 'lodash'
+
 class SimpleSocketClient
   @_callbacks: {}
 
@@ -25,11 +27,17 @@ class SimpleSocketClient
     @socket.onerror = @handleError.bind @
 
   send: (msg, body, onData, onError, onConnectionError) ->
+    throw new Error 'Bad message format' unless msg?
+    throw new Error 'onData must be a function!' unless isFunction onData
+    onError ?= @_handleError
+    throw new Error 'onError must be a function!' unless isFunction onError
+    onConnectionError ?= @_handleError
+    throw new Error 'onConnectionError must be a function!' unless isFunction onConnectionError
     @ctor._callbacks[msg] = data: onData, error: onError
     if @socket.readyState is WebSocket.OPEN
       @socket.send JSON.stringify { msg, body }
     else
-      onConnectionError msg, body, onData, onError, new Error 'Socket is closed; will retry once'
+      onConnectionError new Error('Socket is closed'), msg, body, onData, onError
 
 
 module.exports = SimpleSocketClient
